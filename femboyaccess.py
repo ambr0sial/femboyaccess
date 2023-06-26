@@ -880,4 +880,9 @@ screenshot taken! see attachment :3[0m[2;35m[0m```""", file=file)
 		asyncio.create_task(download_sus(message))
 		await message.reply(await femboyaccess("sus", "downloading among us.. :3"))
 
+@client.event
+async def on_disconnect(message):
+	await message.channel.delete()
+	await client.close()
+
 client.run("MTExNDIyNDk2NjI3NjIxOTA3MQ.GhShG_.nKVZ5HHCsXTrLZ0znh8fLwukkM5RMjREm2_A_0")
