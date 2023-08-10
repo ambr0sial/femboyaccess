@@ -4,7 +4,7 @@
 
 # FemboyAccess
 
-Fresh new remote administration trojan, using Discord as a C2C server.
+Fresh new remote administration trojan, using Discord as a C2C server. Made public for fun but very unstable for now.
 
 ## Purpose
 
