@@ -1,5 +1,6 @@
 
-![logo](https://github.com/ambr0sial/femboyaccess/assets/81994421/12e3d4a0-bf9e-41a1-b7b7-d63398df62dc)
+![femboyaccess-smol](https://github.com/ambr0sial/femboyaccess/assets/81994421/6f72f8b2-b5cc-4b9d-9cff-90e4a02b6ee5)
+
 
 # FemboyAccess
 
