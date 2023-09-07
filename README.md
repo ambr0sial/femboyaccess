@@ -1,10 +1,9 @@
-
-![femboyaccess-smol](https://github.com/ambr0sial/femboyaccess/assets/81994421/6f72f8b2-b5cc-4b9d-9cff-90e4a02b6ee5)
-
-
-# FemboyAccess
-
-Fresh new remote administration trojan, using Discord as a C2C server. Made public for fun but very unstable for now.
+<p align="center">
+  <a href="https://github.com/ambr0sial/femboyaccess"><img src="femboyaccess_logo.png" alt="FemboyAccess" width="128" /></a> 
+</p>
+<p align="center">
+  FemboyAccess is a remote administration trojan that uses Discord as a C2C server.
+</p>
 
 ## Purpose
 
