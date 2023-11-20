@@ -4,6 +4,7 @@ from kivymd.uix.label import MDLabel
 from kivymd.uix.textfield import MDTextField
 from kivymd.uix.button import MDRaisedButton
 from kivy.uix.image import AsyncImage
+import ctypes
 
 class GUIBuilder(MDBoxLayout):
     def __init__(self, **kwargs):
@@ -28,8 +29,7 @@ class GUIBuilder(MDBoxLayout):
         save_button = MDRaisedButton(
             text='Build',
             on_release=self.save_configuration,
-            size_hint_x=1,
-            pos_hint={"center_x": 0.5, "y": 0}
+            size_hint_x=1
         )
         self.add_widget(save_button)
 
@@ -45,6 +45,8 @@ class GUIBuilder(MDBoxLayout):
 
         with open('built_femboyaccess.py', 'w') as script_file:
             script_file.write(updated_source_code)
+
+        ctypes.windll.user32.MessageBoxA(0, "FemboyAccess has been built to built_femboyaccess.py!".encode('utf-8'), "FemboyAccess".encode('utf-8'), 1)
 
 class GUIBuilderApp(MDApp):
     def build(self):
