@@ -4,6 +4,9 @@
 <p align="center">
   FemboyAccess is a remote administration trojan that uses Discord as a C2C server.
 </p>
+<p align="center">
+  Newest version: 1.7
+</p>
 
 ## ⚠️ Disclaimer ⚠️
 
