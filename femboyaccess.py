@@ -1,3 +1,4 @@
+# yes, the token has been reset, dumbasses 💀
 from modules.fem_imports import *
 
 #//  VARIABLES AND CONSTANTS (DO NOT TOUCH ANYTHING EXCEPT GUILD_ID AND TOKEN)  \\#
