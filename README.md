@@ -5,7 +5,7 @@
   FemboyAccess is a remote administration trojan that uses Discord as a C2C server.
 </p>
 <p align="center">
-  Newest version: 1.7
+  Newest version: 1.8
 </p>
 
 ## ⚠️ Disclaimer ⚠️
@@ -24,7 +24,7 @@ FemboyAccess is a RAT (Remote Administration Tool/Trojan) that uses the Discord 
 - a lot of commands
 - silent
 
-FemboyAccess 1.6 and higher contains a stealth mode activated by default (line `126` to change that) that hides the Python window and changes the process name. Reminder that you can create pull requests, so if you have any ideas to hide FemboyAccess even more, give it a shot!
+FemboyAccess 1.6 and higher contains a stealth mode activated by default (line `61` to change that) that hides the Python window and changes the process name. Reminder that you can create pull requests, so if you have any ideas to hide FemboyAccess even more, give it a shot!
 
 ## Usage 🛠
 
